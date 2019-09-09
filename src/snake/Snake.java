@@ -22,7 +22,7 @@ public class Snake implements ActionListener, KeyListener {
 	
 	public ArrayList<Point> snakeParts = new ArrayList<Point>();
 	
-	public int ticks = 0, direction = DOWN, score, tailLength; 
+	public int ticks = 0, direction = DOWN, score, tailLength, time; 
 	public Point head, cherry;
 	
 	public static final int UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3, SCALE = 10;
@@ -45,10 +45,11 @@ public class Snake implements ActionListener, KeyListener {
 	}
 	
 	public void startGame() {
+		time = 0;
 		over = false;
 		paused = false;
 		score = 0;
-		tailLength = 5;
+		tailLength = 1;
 		direction = DOWN;
 		snakeParts.clear();
 		head = new Point(0,-1);
@@ -73,9 +74,8 @@ public class Snake implements ActionListener, KeyListener {
 		ticks++;
 		
 		if(ticks % 2 == 0 && head != null && !over && !paused) {
+			time++;
 			snakeParts.add(new Point(head.x, head.y));
-			if(snakeParts.size() > tailLength)
-				snakeParts.remove(0);
 			if(direction == UP) 
 				if(head.y - 1 >= 0 && noTailAt(head.x, head.y - 1))
 					head = new Point(head.x, head.y - 1);
@@ -96,8 +96,8 @@ public class Snake implements ActionListener, KeyListener {
 					head = new Point(head.x + 1, head.y);
 				else
 					over = true;
-			
-		
+			if(snakeParts.size() > tailLength)
+				snakeParts.remove(0);
 			if(cherry != null) {
 				if(head.equals(cherry)) {
 					score+=10;
@@ -109,13 +109,13 @@ public class Snake implements ActionListener, KeyListener {
 	}
 	
 	
-	private boolean noTailAt(int i, int y) {
+	private boolean noTailAt(int x, int y) {
 		for(Point point : snakeParts) {
-			if(point.equals(head))
-				return true;
+			if(point.equals(new Point(x, y)))
+				return false;
 		}
 	
-		return false;
+		return true;
 	}
 
 	public void updateSnake() {
